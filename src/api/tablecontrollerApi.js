@@ -27,7 +27,7 @@ export async function listPlayers(roomCode){
         return [];
     }
 
-};
+}
 
 export async function getRoundInfo(roomCode) {
         if(!roomCode)

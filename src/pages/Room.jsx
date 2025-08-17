@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { connectSocket, sendMessage, disconnectSocket, sendPing } from "../api/websocketApi";
 import { listPlayers } from "../api/tablecontrollerApi";
 import PlayerTable from "./roomComponents/playerTable";
+import Controls from "./roomComponents/Controls";
 
 const Room = () => {
 
@@ -20,6 +21,7 @@ const Room = () => {
 
 
         connectSocket(roomcode, playerId, handleCommands);
+        // This is where the ping system begins from, once this component loads itself a ping is sent to all in the same roomcode connection to datarefresh
         sendPing("Someone has joined", "dataRefresh", roomcode);
 
         return () => disconnectSocket();
@@ -50,10 +52,10 @@ const Room = () => {
             console.warn("No room code available.");
             return;
         }
-
-        const playerList = await listPlayers(roomcode);
-        console.log("✅ Players fetched:", playerList);
-        setPlayers(playerList); // optional: to show in UI
+        sendPing("Testing ping", "dataRefresh", roomcode);
+        //const playerList = await listPlayers(roomcode);
+        //console.log("✅ Players fetched:", playerList);
+        //setPlayers(playerList); // optional: to show in UI
     };
 
 
@@ -81,7 +83,7 @@ const Room = () => {
                 </ul>
             </div>
 
-            <button onClick={handleListPlayers}>🔍 Test List Players</button>
+            <button onClick={handleListPlayers}>🔍 Test datarefresh ping </button>
 
             <div>
                 <h3>Debug Info</h3>
@@ -93,7 +95,9 @@ const Room = () => {
             <div>
                 <PlayerTable lastCommand={lastCommand} setLastCommand={setLastCommand} roomcode={roomcode} playerId={playerId}/>
             </div>
-
+            <div>
+                <Controls roomcode={roomcode} />
+            </div>
 
         </div>
     );

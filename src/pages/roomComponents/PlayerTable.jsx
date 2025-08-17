@@ -8,7 +8,7 @@ const PlayerTable = ({lastCommand, setLastCommand, roomcode, playerId }) => {
     
     useEffect(() =>
     {
-        if(!lastCommand && !roomcode)
+        if(!roomcode)
             return;
 
         const fetchPlayers = async () => {

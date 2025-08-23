@@ -9,6 +9,7 @@ const Room = () => {
     const storedData = JSON.parse(localStorage.getItem("roomData"));
     const roomcode = storedData?.roomcode;
     const playerId = storedData?.player?.id;
+    const playertype = storedData?.player?.type;
 
     const [messageInput, setMessageInput] = useState(""); // input state
     const [messages, setMessages] = useState([]); // to store received messages
@@ -16,6 +17,7 @@ const Room = () => {
     const [players, setPlayers] = useState([]); //using to test our api call
 
     const [lastCommand, setLastCommand] = useState(null);
+    const [currentPlayerid, setCurrentPlayerID] = useState(null);
 
     useEffect(() => {
 
@@ -89,14 +91,23 @@ const Room = () => {
                 <h3>Debug Info</h3>
                 <p>Roomcode: {roomcode}</p>
                 <p>Player ID: {playerId}</p>
+                <p>Player Type: {playertype}</p>
                 <p>Last Command: {lastCommand}</p>
                 </div>
 
             <div>
-                <PlayerTable lastCommand={lastCommand} setLastCommand={setLastCommand} roomcode={roomcode} playerId={playerId}/>
+                <PlayerTable 
+                lastCommand={lastCommand} 
+                setLastCommand={setLastCommand} 
+                roomcode={roomcode} 
+                setCurrentPlayerID={setCurrentPlayerID} />
             </div>
             <div>
-                <Controls roomcode={roomcode} />
+                <Controls 
+                roomcode={roomcode} 
+                playerId={playerId}
+                currentPlayerid={currentPlayerid}
+                isDM={playertype==="DM"}  />
             </div>
 
         </div>

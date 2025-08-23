@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Button, Table} from 'react-bootstrap';
 import { listPlayers, getRoundInfo} from "../../api/tablecontrollerApi";
 
-const PlayerTable = ({lastCommand, setLastCommand, roomcode, playerId }) => {
+const PlayerTable = ({lastCommand, setLastCommand, roomcode, setCurrentPlayerID}) => {
     const [players, setPlayers] = useState(null);
     const [roominfo, setRoomInfo] = useState(null);
+    const [currentPlayer, setCurrentPlayer] = useState(null);
     
+    //useeffect to manage room and player info
     useEffect(() =>
     {
         if(!roomcode)
@@ -59,6 +61,20 @@ const PlayerTable = ({lastCommand, setLastCommand, roomcode, playerId }) => {
 
         handleCommand();
     }, [lastCommand, roomcode]);
+    //useeffect to manage element after we have the player room info
+    useEffect(() => {
+
+
+                if (!roominfo || !players || players.length === 0) return;
+
+                const turnIndex = roominfo.current_turn -1; 
+                const currentPlayerid = players[turnIndex]?.id;
+                setCurrentPlayer(players[turnIndex]?.id);
+                setCurrentPlayerID(players[turnIndex]?.id);
+            
+
+    }, [roominfo, players, setCurrentPlayerID]);
+
     // console.log("👀 PlayerTable loaded. Room:", roomcode, "Player ID" , playerId, "LastCommand:", lastCommand);
     return (
         <div>
@@ -69,6 +85,7 @@ const PlayerTable = ({lastCommand, setLastCommand, roomcode, playerId }) => {
                             <p>Status: {roominfo.room_status}</p>
                             <p>Round: {roominfo.round_count} Current Turn: {roominfo.current_turn}</p>
                             <p>Session Start: {roominfo.session_start_time}</p>
+                            <p>currentPlayer: {currentPlayer}</p>
                         </>
                     ) : (
                         <p>Loading room info...</p>

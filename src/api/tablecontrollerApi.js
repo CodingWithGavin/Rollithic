@@ -50,3 +50,36 @@ export async function getRoundInfo(roomCode) {
         return[];
     }
 }
+
+export async function editPlayer(playerId, updatedData) {
+    
+    try {
+        const response = await fetch(`${BASE_URL}/players/${playerId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(updatedData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update player: ${response.status} ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error with update to player: ', error);
+    }
+}
+
+export async function kickPlayer(playerId) {
+    try {
+        const response = await fetch(`${BASE_URL}/players/${playerId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json'},
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update player: ${response.status} ${response.statusText}`);
+        }
+
+    } catch (error) {
+        console.error('Error with deleting player: ', error);
+    }
+}

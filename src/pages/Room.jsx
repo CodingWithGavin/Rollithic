@@ -95,8 +95,9 @@ const Room = () => {
                 <p>Last Command: {lastCommand}</p>
                 </div>
 
-            <div>
+            <div >
                 <PlayerTable 
+                playerId={playerId}
                 lastCommand={lastCommand} 
                 setLastCommand={setLastCommand} 
                 roomcode={roomcode} 

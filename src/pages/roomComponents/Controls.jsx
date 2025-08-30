@@ -14,7 +14,7 @@ const Controls = ({roomcode, playerId, currentPlayerid, isDM }) => {
             return[];
         }
 
-    setLoading(true);
+        setLoading(true);
         try {
             await turnChange(roomcode, amount);
             sendPing("The Turn Has Changed", "dataRefresh", roomcode);
@@ -32,15 +32,35 @@ const Controls = ({roomcode, playerId, currentPlayerid, isDM }) => {
                 <p>My ID: {playerId} </p>
                 <p>Current players ID: {currentPlayerid}</p>
                 {isDM? (
-                    <p>
-                        I am the DM
-                    </p>
+                    <>
+                        <Button
+                            varient="primary"
+                            disabled={loading}
+                            onClick={() => handleTurnChange(1)}
+                            >
+                            {loading ? "Changing..." : "End Turn"}
+                        </Button>
+
+                        <Button
+                            varient="secondary"
+                            disabled={loading}
+                            onClick={() => handleTurnChange(-1)}
+                            >
+                            {loading ? "Changing..." : "Reverse Turn"}
+                        </Button>
+                    </>
                 ) : (
                     <>
                         {isMyTurn? (
-                        <p>
-                            Its my turn now
-                        </p>
+                        <>
+                            <Button
+                                varient="primary"
+                                disabled={loading}
+                                onClick={() => handleTurnChange(1)}
+                                >
+                                {loading ? "Changing..." : "End Turn"}
+                            </Button>
+                        </>
                     ) : (
                         <p>its not my turn yet</p>
                     )}
@@ -50,21 +70,7 @@ const Controls = ({roomcode, playerId, currentPlayerid, isDM }) => {
 
                 
             </div>
-            <Button
-                varient="primary"
-                disabled={loading}
-                onClick={() => handleTurnChange(1)}
-                >
-                {loading ? "Changing..." : "End Turn"}
-            </Button>
-
-            <Button
-                varient="secondary"
-                disabled={loading}
-                onClick={() => handleTurnChange(-1)}
-                >
-                {loading ? "Changing..." : "Reverse Turn"}
-            </Button>
+            
 
         </div>
     );

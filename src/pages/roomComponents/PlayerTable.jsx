@@ -3,7 +3,7 @@ import { Button, Table, Modal, Form} from 'react-bootstrap';
 import { listPlayers, getRoundInfo, editPlayer, kickPlayer} from "../../api/tablecontrollerApi";
 import { sendPing } from "../../api/websocketApi";
 
-const PlayerTable = ({playerId, lastCommand, setLastCommand, roomcode, setCurrentPlayerID}) => {
+const PlayerTable = ({playerId, lastCommand, setLastCommand, roomcode, setCurrentPlayerID, isDM}) => {
     const [players, setPlayers] = useState(null);
     const [roominfo, setRoomInfo] = useState(null);
     const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -147,103 +147,108 @@ const PlayerTable = ({playerId, lastCommand, setLastCommand, roomcode, setCurren
                 ) : (
                     <h2>Wait... how did you get here???</h2>
                 )}
-                <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Edit Player</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {selectedPlayer && (
-                        <Form>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Initiative</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    value={selectedPlayer.initiative_count}
-                                    onChange={(e) =>
-                                        setSelectedPlayer({ ...selectedPlayer, initiative_count: parseInt(e.target.value, 10)})
-                                    }
-                                />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Name</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={selectedPlayer.player_name}
-                                    onChange={(e) =>
-                                        setSelectedPlayer({ ...selectedPlayer, player_name: e.target.value})
-                                    }
-                                />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Hit Points</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    value={selectedPlayer.hit_point_count}
-                                    onChange={(e) =>
-                                        setSelectedPlayer({ ...selectedPlayer, hit_point_count: parseInt(e.target.value, 10)})
-                                    }
-                                />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Armour Class</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    value={selectedPlayer.AC}
-                                    onChange={(e) =>
-                                        setSelectedPlayer({ ...selectedPlayer, AC: parseInt(e.target.value, 10)})
-                                    }
-                                />
-                            </Form.Group>
-                            
-                        </Form>
-                        )}
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button
-                        variant="danger"
-                        onClick={async () => {
-                            try {
-                                await kickPlayer(selectedPlayer.id);
+                {(isDM || playerId === selectedPlayer?.id) && (
 
-                                sendPing("A player has been kicked", "dataRefresh", roomcode);
-                                setShowModal(false);
+                    <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Edit Player</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            {selectedPlayer && (
+                            <Form>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Initiative</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        value={selectedPlayer.initiative_count}
+                                        onChange={(e) =>
+                                            setSelectedPlayer({ ...selectedPlayer, initiative_count: parseInt(e.target.value, 10)})
+                                        }
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={selectedPlayer.player_name}
+                                        onChange={(e) =>
+                                            setSelectedPlayer({ ...selectedPlayer, player_name: e.target.value})
+                                        }
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Hit Points</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        value={selectedPlayer.hit_point_count}
+                                        onChange={(e) =>
+                                            setSelectedPlayer({ ...selectedPlayer, hit_point_count: parseInt(e.target.value, 10)})
+                                        }
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Armour Class</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        value={selectedPlayer.AC}
+                                        onChange={(e) =>
+                                            setSelectedPlayer({ ...selectedPlayer, AC: parseInt(e.target.value, 10)})
+                                        }
+                                    />
+                                </Form.Group>
                                 
-                            } catch (error) {
-                                console.error("Failed to save changes:", err);
-                            }
-                            
-                        }}
-                        >
-                        Kick Player
-                        </Button>
-                        <Button
-                        variant="primary"
-                        onClick={async () => {
-                            try {
-                                await editPlayer(selectedPlayer.id, {
-                                    player_name: selectedPlayer.player_name,
-                                    initiative_count: selectedPlayer.initiative_count,
-                                    AC: selectedPlayer.AC,
-                                    hit_point_count: selectedPlayer.hit_point_count,
-                                });
+                            </Form>
+                            )}
+                        </Modal.Body>
+                        <Modal.Footer>
+                            {isDM && (
 
-                                sendPing("A player has been updated", "dataRefresh", roomcode);
-                                setShowModal(false);
+                                <Button
+                                variant="danger"
+                                onClick={async () => {
+                                    try {
+                                        await kickPlayer(selectedPlayer.id);
+
+                                        sendPing("A player has been kicked", "dataRefresh", roomcode);
+                                        setShowModal(false);
+                                        
+                                    } catch (error) {
+                                        console.error("Failed to save changes:", err);
+                                    }
+                                    
+                                }}
+                                >
+                                Kick Player
+                                </Button>
+                            )}
+                            <Button
+                            variant="primary"
+                            onClick={async () => {
+                                try {
+                                    await editPlayer(selectedPlayer.id, {
+                                        player_name: selectedPlayer.player_name,
+                                        initiative_count: selectedPlayer.initiative_count,
+                                        AC: selectedPlayer.AC,
+                                        hit_point_count: selectedPlayer.hit_point_count,
+                                    });
+
+                                    sendPing("A player has been updated", "dataRefresh", roomcode);
+                                    setShowModal(false);
+                                    
+                                } catch (error) {
+                                    console.error("Failed to save changes:", err);
+                                }
                                 
-                            } catch (error) {
-                                console.error("Failed to save changes:", err);
-                            }
-                            
-                        }}
-                        >
-                        Save Changes
-                        </Button>
-                        <Button variant="secondary" onClick={() => setShowModal(false)}>
-                        Cancel
-                        </Button>
-                    </Modal.Footer>
-                    </Modal>
-
+                            }}
+                            >
+                            Save Changes
+                            </Button>
+                            <Button variant="secondary" onClick={() => setShowModal(false)}>
+                            Cancel
+                            </Button>
+                        </Modal.Footer>
+                        </Modal>
+                )}
 
             </div>
         

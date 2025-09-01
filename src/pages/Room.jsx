@@ -101,7 +101,8 @@ const Room = () => {
                 lastCommand={lastCommand} 
                 setLastCommand={setLastCommand} 
                 roomcode={roomcode} 
-                setCurrentPlayerID={setCurrentPlayerID} />
+                setCurrentPlayerID={setCurrentPlayerID}
+                isDM={playertype==="DM"} />
             </div>
             <div>
                 <Controls 

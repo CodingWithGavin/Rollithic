@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button} from 'react-bootstrap';
-import { turnChange } from "../../api/roomControlsApi";
+import { turnChange, editRoom} from "../../api/roomControlsApi";
 import { sendPing } from "../../api/websocketApi";
 
 const Controls = ({roomcode, playerId, currentPlayerid, isDM }) => {
@@ -47,6 +47,40 @@ const Controls = ({roomcode, playerId, currentPlayerid, isDM }) => {
                             onClick={() => handleTurnChange(-1)}
                             >
                             {loading ? "Changing..." : "Reverse Turn"}
+                        </Button>
+
+                        <Button
+                            variant="secondary"
+                            disabled={loading}
+                            onClick={async () => {
+                                try {
+                                    editRoom(roomcode, {room_status: "Private Test"});
+
+                                    sendPing("Room Status Changed", "dataRefresh", roomcode);
+
+                                } catch (error) {
+                                    console.error("Room Status Change Fail:", err);
+                                }
+                            }}
+                            >
+                            {loading ? "Changing..." : "Make Private"}
+                        </Button>
+
+                        <Button
+                            variant="secondary"
+                            disabled={loading}
+                            onClick={async () => {
+                                try {
+                                    editRoom(roomcode, {room_status: "Active"});
+
+                                    sendPing("Room Status Changed", "dataRefresh", roomcode);
+
+                                } catch (error) {
+                                    console.error("Room Status Change Fail:", err);
+                                }
+                            }}
+                            >
+                            {loading ? "Changing..." : "Make Active"}
                         </Button>
                     </>
                 ) : (

@@ -30,3 +30,20 @@ export async function turnChange(roomCode, turnChangeAmount) {
         return [];
     }
 }
+
+export async function editRoom(room_code, updateData) {
+    try {
+        const response = await fetch(`${BASE_URL}/room/${room_code}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(updateData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update room: ${response.status} ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error with update to room: ', error);
+    }
+    
+}
